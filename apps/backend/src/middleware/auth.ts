@@ -7,7 +7,7 @@ export function auth(req: Request, res: Response, next: NextFunction) {
   // by default ts doesn't understand the payload so had to create a global.d.ts file and modified tsconfig
   const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
   if (decoded) {
-    req.userID = decoded.userID;
+    req.userId = decoded.userId;
     //updated the structure of the request object here.
     next();
   } else {
