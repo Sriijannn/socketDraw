@@ -1,7 +1,6 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import path from "path";
+
 import { auth } from "./middleware/auth";
 import { JWT_SECRET } from "@repo/backend-common/config";
 import { prismaClient } from "@repo/database/client";
@@ -10,7 +9,7 @@ import {
   SigninSchema,
   CreateRoomSchema,
 } from "@repo/com/types";
-import { json } from "stream/consumers";
+
 const app = express();
 //port of backend server
 app.listen(3002);
