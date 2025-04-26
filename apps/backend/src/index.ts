@@ -52,27 +52,31 @@ app.post("/signin", async (req, res) => {
     });
     return;
   }
-  const user = await prismaClient.user.findFirst({
-    where: {
-      email: parsedData.data.username,
-      password: parsedData.data.password,
-    },
-  });
-  if (!user) {
-    res.status(403).json({
-      message: "User doesn't exist",
+  try {
+    const user = await prismaClient.user.findFirst({
+      where: {
+        email: parsedData.data.username,
+        password: parsedData.data.password,
+      },
     });
-  }
+    if (!user) {
+      res.status(403).json({
+        message: "User doesn't exist",
+      });
+    }
 
-  const token = jwt.sign(
-    {
-      userId: user?.id,
-    },
-    JWT_SECRET
-  );
-  res.status(200).json({
-    token,
-  });
+    const token = jwt.sign(
+      {
+        userId: user?.id,
+      },
+      JWT_SECRET
+    );
+    res.status(200).json({
+      token,
+    });
+  } catch (e) {
+    console.log(e);
+  }
 });
 //room
 app.post("/room", auth, async (req, res) => {
@@ -103,5 +107,24 @@ app.post("/room", auth, async (req, res) => {
     res.status(403).json({
       message: "Room Already Exists",
     });
+  }
+});
+
+//get message
+app.get("/chats/:roomId", async (req, res) => {
+  const roomId = Number(req.params.roomId);
+  try {
+    const messages = await prismaClient.chat.findMany({
+      where: {
+        roomId: roomId,
+      },
+      orderBy: {
+        id: "desc",
+      },
+      take: 50,
+    });
+    res.json({ messages });
+  } catch (e) {
+    console.log(e);
   }
 });
